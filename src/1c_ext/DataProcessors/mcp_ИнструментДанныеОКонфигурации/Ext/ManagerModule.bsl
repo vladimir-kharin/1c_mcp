@@ -25,7 +25,7 @@
 	МассивПараметров = Новый Массив;
 	
 	// Параметр metaType - тип объекта метаданных
-	СписокТиповМетаданных = "Catalogs,Documents,InformationRegisters,AccumulationRegisters,AccountingRegisters,CalculationRegisters,ChartsOfCharacteristicTypes,ChartsOfAccounts,ChartsOfCalculationTypes,BusinessProcesses,Tasks,ExchangePlans,FilterCriteria,Reports,DataProcessors,Enums,CommonModules,SessionParameters,CommonTemplates,CommonPictures,XDTOPackages,WebServices,HTTPServices,WSReferences,Styles,Languages,FunctionalOptions,FunctionalOptionsParameters,DefinedTypes,CommonAttributes,CommonCommands,CommandGroups,Constants,CommonForms,Roles,Subsystems,EventSubscriptions,ScheduledJobs,SettingsStorages,Sequences,DocumentJournals,ExternalDataSources,Interfaces,CommonModules";
+	СписокТиповМетаданных = "Catalogs,Documents,InformationRegisters,AccumulationRegisters,AccountingRegisters,CalculationRegisters,ChartsOfCharacteristicTypes,ChartsOfAccounts,ChartsOfCalculationTypes,BusinessProcesses,Tasks,ExchangePlans,FilterCriteria,Reports,DataProcessors,Enums,CommonModules,SessionParameters,CommonTemplates,CommonPictures,XDTOPackages,WebServices,HTTPServices,WSReferences,Styles,Languages,FunctionalOptions,FunctionalOptionsParameters,DefinedTypes,CommonAttributes,CommonCommands,CommandGroups,Constants,CommonForms,Roles,Subsystems,EventSubscriptions,ScheduledJobs,SettingsStorages,Sequences,DocumentJournals,ExternalDataSources,Interfaces";
 	
 	МассивПараметров.Добавить(mcp_Метаданные.ПараметрИнструмента(
 		"metaType",
@@ -178,4 +178,5 @@
 КонецФункции
 
 #КонецОбласти
+
 

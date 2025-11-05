@@ -3,7 +3,7 @@ FROM python:3.13-slim
 
 # Метаданные
 LABEL maintainer="1C MCP Proxy"
-LABEL description="MCP-прокси для взаимодействия с 1С:Предприятие"
+LABEL description="MCP-прокси для решения инфраструктурных проблем подключения к MCP-серверу, реализованному в 1С:Предприятие"
 
 # Рабочая директория
 WORKDIR /app

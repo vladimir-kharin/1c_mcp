@@ -1,0 +1,10 @@
+{
+    "mcpServers": {
+      "1c-server-direct": {
+        "type": "streamable-http",
+        "url": "http://localhost/имя_вашей_публикации/hs/mcp/",
+        "disabled": false,
+        "alwaysAllow": []
+      }
+    }
+  }

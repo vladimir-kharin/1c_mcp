@@ -178,7 +178,7 @@ class MCPHttpServer:
 		вместо зависимости от Starlette Request и приватных атрибутов.
 		"""
 		# Создаем SSE транспорт для обработки сообщений
-		sse_transport = SseServerTransport("/messages")
+		sse_transport = SseServerTransport("/messages/")
 
 		async def asgi(scope: Scope, receive: Receive, send: Send) -> None:
 			"""ASGI обработчик для SSE соединений."""
@@ -202,6 +202,8 @@ class MCPHttpServer:
 				path = path[4:]  # Убираем "/sse"
 			if not path:
 				path = "/"
+			if path == "/messages":
+				path = "/messages/"
 
 			method = scope["method"]
 
@@ -227,7 +229,11 @@ class MCPHttpServer:
 
 			elif method == "POST" and path.startswith("/messages"):
 				# Обработка POST сообщений через транспорт
-				await sse_transport.handle_post_message(scope, receive, send)
+				adjusted_scope = dict(scope)
+				adjusted_scope["path"] = path
+				if "raw_path" in adjusted_scope:
+					adjusted_scope["raw_path"] = path.encode("utf-8")
+				await sse_transport.handle_post_message(adjusted_scope, receive, send)
 
 			else:
 				# Неизвестный маршрут

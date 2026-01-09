@@ -16,8 +16,6 @@ import httpx
 from mcp.server.sse import SseServerTransport
 from mcp.server.streamable_http_manager import StreamableHTTPSessionManager
 from mcp.server.models import InitializationOptions
-from starlette.applications import Starlette
-from starlette.routing import Mount, Route
 from starlette.types import Scope, Receive, Send
 from starlette.middleware.base import BaseHTTPMiddleware
 
@@ -173,44 +171,77 @@ class MCPHttpServer:
 		
 		logger.debug("Остановка HTTP-сервера MCP")
 	
-	def _create_sse_starlette_app(self) -> Starlette:
-		"""Создание Starlette приложения для обработки SSE."""
+	def _create_sse_asgi(self):
+		"""Создание чистого ASGI обработчика для SSE.
+
+		Использует прямую работу с ASGI примитивами (scope/receive/send)
+		вместо зависимости от Starlette Request и приватных атрибутов.
+		"""
 		# Создаем SSE транспорт для обработки сообщений
-		sse_transport = SseServerTransport("/messages/")
-		
-		async def handle_sse(request):
-			"""Обработчик SSE подключений."""
-			logger.debug("Новое SSE подключение")
-			
-			try:
-				# Подключаем SSE с использованием транспорта
-				async with sse_transport.connect_sse(
-					request.scope, 
-					request.receive, 
-					request._send
-				) as streams:
-					# Запускаем MCP сервер с потоками
-					await self.mcp_proxy.server.run(
-						streams[0], 
-						streams[1], 
-						self.mcp_proxy.get_initialization_options()
-					)
-			except Exception as e:
-				logger.error(f"Ошибка в SSE обработчике: {e}")
-				raise
-			finally:
-				logger.debug("SSE подключение закрыто")
-		
-		# Создаем маршруты для Starlette приложения
-		# Когда это приложение монтируется на /sse:
-		# - Route("/", ...) становится GET /sse (SSE подключение)
-		# - Mount("/messages/", ...) становится POST /sse/messages/ (отправка сообщений)
-		routes = [
-			Route("/", endpoint=handle_sse),  # SSE endpoint: GET /sse
-			Mount("/messages/", app=sse_transport.handle_post_message),  # Messages: POST /sse/messages/
-		]
-		
-		return Starlette(routes=routes)
+		sse_transport = SseServerTransport("/messages")
+
+		async def asgi(scope: Scope, receive: Receive, send: Send) -> None:
+			"""ASGI обработчик для SSE соединений."""
+			# Обработка lifespan событий
+			if scope["type"] == "lifespan":
+				while True:
+					message = await receive()
+					if message["type"] == "lifespan.startup":
+						await send({"type": "lifespan.startup.complete"})
+					elif message["type"] == "lifespan.shutdown":
+						await send({"type": "lifespan.shutdown.complete"})
+						return
+
+			# Обработка HTTP запросов
+			if scope["type"] != "http":
+				return
+
+			# Нормализация пути: убираем префикс /sse
+			path = scope["path"]
+			if path.startswith("/sse"):
+				path = path[4:]  # Убираем "/sse"
+			if not path:
+				path = "/"
+
+			method = scope["method"]
+
+			# Маршрутизация:
+			# GET / -> SSE подключение
+			# POST /messages -> отправка сообщений
+			if method == "GET" and path == "/":
+				logger.debug("Новое SSE подключение")
+				try:
+					# Подключаем SSE с использованием транспорта
+					async with sse_transport.connect_sse(scope, receive, send) as streams:
+						# Запускаем MCP сервер с потоками
+						await self.mcp_proxy.server.run(
+							streams[0],
+							streams[1],
+							self.mcp_proxy.get_initialization_options()
+						)
+				except Exception as e:
+					logger.error(f"Ошибка в SSE обработчике: {e}")
+					raise
+				finally:
+					logger.debug("SSE подключение закрыто")
+
+			elif method == "POST" and path.startswith("/messages"):
+				# Обработка POST сообщений через транспорт
+				await sse_transport.handle_post_message(scope, receive, send)
+
+			else:
+				# Неизвестный маршрут
+				await send({
+					"type": "http.response.start",
+					"status": 404,
+					"headers": [[b"content-type", b"text/plain"]],
+				})
+				await send({
+					"type": "http.response.body",
+					"body": b"Not Found",
+				})
+
+		return asgi
 	
 	def _create_streamable_http_asgi(self):
 		"""Создание ASGI обработчика для Streamable HTTP."""
@@ -232,11 +263,11 @@ class MCPHttpServer:
 	
 	def _mount_transports(self):
 		"""Монтирование транспортов MCP."""
-		
+
 		# Монтируем SSE транспорт на /sse
-		sse_app = self._create_sse_starlette_app()
+		sse_app = self._create_sse_asgi()
 		self.app.mount("/sse", sse_app)
-		
+
 		# Монтируем Streamable HTTP транспорт на /mcp/ (с trailing slash для устранения 307 редиректов)
 		streamable_app = self._create_streamable_http_asgi()
 		self.app.mount("/mcp/", streamable_app)

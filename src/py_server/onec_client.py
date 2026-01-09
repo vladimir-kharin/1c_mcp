@@ -17,7 +17,7 @@ class OneCClient:
 	
 	def __init__(self, base_url: str, username: str, password: str, service_root: str = "mcp"):
 		"""Инициализация клиента.
-		
+
 		Args:
 			base_url: Базовый URL 1С (например, http://localhost/base)
 			username: Имя пользователя
@@ -27,15 +27,32 @@ class OneCClient:
 		self.base_url = base_url.rstrip('/')
 		self.service_root = service_root.strip('/')
 		self.auth = httpx.BasicAuth(username, password)
-		self.client = httpx.AsyncClient(
+
+		# Используем метод для создания клиента
+		self.client = self._create_client()
+
+		# Формируем базовый URL для HTTP-сервиса
+		self.service_base_url = f"{self.base_url}/hs/{self.service_root}"
+		logger.debug(f"Базовый URL HTTP-сервиса: {self.service_base_url}")
+
+	def _create_client(self) -> httpx.AsyncClient:
+		"""Создание нового HTTP-клиента.
+
+		Returns:
+			Новый экземпляр httpx.AsyncClient
+		"""
+		return httpx.AsyncClient(
 			auth=self.auth,
 			timeout=30.0,
 			headers={"Content-Type": "application/json"}
 		)
-		
-		# Формируем базовый URL для HTTP-сервиса
-		self.service_base_url = f"{self.base_url}/hs/{self.service_root}"
-		logger.debug(f"Базовый URL HTTP-сервиса: {self.service_base_url}")
+
+	async def _ensure_client(self):
+		"""Проверка состояния клиента и восстановление при необходимости."""
+		if self.client.is_closed:
+			logger.warning("HTTP-клиент был закрыт, выполняется восстановление...")
+			self.client = self._create_client()
+			logger.info("HTTP-клиент успешно восстановлен")
 	
 	async def check_health(self) -> bool:
 		"""Проверить состояние HTTP-сервиса 1С.
@@ -44,6 +61,9 @@ class OneCClient:
 			True, если сервис доступен и здоров, иначе вызывает исключение.
 		"""
 		try:
+			# Проверяем и восстанавливаем клиент при необходимости
+			await self._ensure_client()
+
 			url = f"{self.service_base_url}/health"
 			logger.debug(f"Запрос состояния здоровья: {url}")
 
@@ -69,15 +89,18 @@ class OneCClient:
 	
 	async def call_rpc(self, method: str, params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
 		"""Выполнить JSON-RPC запрос к 1С.
-		
+
 		Args:
 			method: Имя метода
 			params: Параметры метода
-			
+
 		Returns:
 			Результат выполнения метода
 		"""
 		try:
+			# Проверяем и восстанавливаем клиент при необходимости
+			await self._ensure_client()
+
 			url = f"{self.service_base_url}/rpc"
 			
 			# Формируем JSON-RPC запрос

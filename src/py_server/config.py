@@ -15,8 +15,8 @@ class Config(BaseSettings):
 	
 	# Настройки подключения к 1С
 	onec_url: str = Field(..., description="URL базы 1С")
-	onec_username: str = Field(..., description="Имя пользователя 1С")
-	onec_password: str = Field(..., description="Пароль пользователя 1С")
+	onec_username: Optional[str] = Field(default=None, description="Имя пользователя 1С")
+	onec_password: Optional[str] = Field(default=None, description="Пароль пользователя 1С")
 	onec_service_root: str = Field(default="mcp", description="Корневой URL HTTP-сервиса в 1С")
 	
 	# Настройки MCP

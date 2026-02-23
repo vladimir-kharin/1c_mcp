@@ -50,8 +50,8 @@ def create_parser() -> argparse.ArgumentParser:
 
 Переменные окружения:
   MCP_ONEC_URL           - URL базы 1С (обязательно)
-  MCP_ONEC_USERNAME      - Имя пользователя 1С (обязательно)
-  MCP_ONEC_PASSWORD      - Пароль пользователя 1С (обязательно)
+  MCP_ONEC_USERNAME      - Имя пользователя 1С (обязательно при auth_mode=none)
+  MCP_ONEC_PASSWORD      - Пароль пользователя 1С (обязательно при auth_mode=none)
   MCP_ONEC_SERVICE_ROOT  - Корневой URL HTTP-сервиса (по умолчанию: mcp)
   MCP_HOST               - Хост HTTP-сервера (по умолчанию: 127.0.0.1)
   MCP_PORT               - Порт HTTP-сервера (по умолчанию: 8000)
@@ -200,13 +200,24 @@ async def main():
 		print(f"Ошибка конфигурации: {e}", file=sys.stderr)
 		print("\nПроверьте, что указаны все обязательные параметры:", file=sys.stderr)
 		print("- MCP_ONEC_URL (URL базы 1С)", file=sys.stderr)
-		print("- MCP_ONEC_USERNAME (имя пользователя)", file=sys.stderr)
-		print("- MCP_ONEC_PASSWORD (пароль)", file=sys.stderr)
 		sys.exit(1)
 	
 	# Настройка логирования
 	setup_logging(config.log_level)
 	logger = logging.getLogger(__name__)
+
+	# Валидация режима авторизации
+	if args.mode == "stdio" and config.auth_mode == "oauth2":
+		logger.error("OAuth2 не поддерживается в режиме stdio. Используйте auth_mode=none.")
+		sys.exit(1)
+
+	if config.auth_mode == "none":
+		if not config.onec_username or not config.onec_password:
+			logger.error("Для auth_mode=none обязательны MCP_ONEC_USERNAME и MCP_ONEC_PASSWORD.")
+			sys.exit(1)
+	else:
+		if config.onec_username or config.onec_password:
+			logger.warning("MCP_ONEC_USERNAME/MCP_ONEC_PASSWORD заданы, но будут игнорироваться при auth_mode=oauth2.")
 	
 	# Отладочная информация через logger (подчиняется уровню логирования)
 	logger.debug(f"Режим работы: {args.mode}")

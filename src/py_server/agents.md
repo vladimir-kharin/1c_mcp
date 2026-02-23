@@ -429,7 +429,7 @@ async def run_stdio_server(config: Config):
 **Особенности:**
 - Использует stdin/stdout для MCP-протокола
 - Логи идут в stderr (важно!)
-- Не поддерживает OAuth2 (используются дефолтные креденшилы из конфига)
+- Не поддерживает OAuth2 (при auth_mode=oauth2 запуск завершается ошибкой)
 
 **Зависимости:**
 - `mcp.server.stdio.stdio_server()` - stdio транспорт из MCP SDK
@@ -636,8 +636,8 @@ class OAuth2Service:
 
 #### Обязательные:
 - `MCP_ONEC_URL` - URL базы 1С (например, `http://localhost/base`)
-- `MCP_ONEC_USERNAME` - Имя пользователя 1С
-- `MCP_ONEC_PASSWORD` - Пароль пользователя 1С
+- `MCP_ONEC_USERNAME` - Имя пользователя 1С (обязательно при `MCP_AUTH_MODE=none`)
+- `MCP_ONEC_PASSWORD` - Пароль пользователя 1С (обязательно при `MCP_AUTH_MODE=none`)
 
 #### Опциональные (основные):
 - `MCP_ONEC_SERVICE_ROOT` - корень HTTP-сервиса (по умолчанию: `mcp`)
@@ -653,6 +653,7 @@ class OAuth2Service:
 - `MCP_OAUTH2_CODE_TTL` - TTL authorization code в секундах (по умолчанию: `120`)
 - `MCP_OAUTH2_ACCESS_TTL` - TTL access token в секундах (по умолчанию: `3600`)
 - `MCP_OAUTH2_REFRESH_TTL` - TTL refresh token в секундах (по умолчанию: `1209600`)
+  - `MCP_ONEC_USERNAME`/`MCP_ONEC_PASSWORD` игнорируются при `MCP_AUTH_MODE=oauth2`
 
 ### Файл `.env`
 

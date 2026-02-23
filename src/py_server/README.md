@@ -136,6 +136,7 @@ docker-compose down
 - Общение через stdin/stdout
 - Используется локальными MCP-клиентами
 - Логи идут в stderr
+- OAuth2 не поддерживается (при `MCP_AUTH_MODE=oauth2` запуск завершится ошибкой)
 
 ### HTTP режим
 
@@ -172,9 +173,10 @@ MCP_PUBLIC_URL=http://your-server:8000
 ```
 
 **Поведение:**
+- OAuth2 доступен только в HTTP режиме (в stdio запуск завершится ошибкой)
 - Каждый клиент авторизуется своими креденшилами 1С
 - Креденшилы передаются через OAuth2 flow
-- `MCP_ONEC_USERNAME` и `MCP_ONEC_PASSWORD` не используются (опциональны для резервного подключения)
+- `MCP_ONEC_USERNAME` и `MCP_ONEC_PASSWORD` не используются (если заданы, будут проигнорированы)
 
 **Поддерживаемые OAuth2 flows:**
 - **Password Grant** - передача username/password напрямую

@@ -103,7 +103,7 @@ class MCPProxy:
 				return []
 		
 		@self.server.call_tool()
-		async def handle_call_tool(name: str, arguments: Dict[str, Any]) -> List[types.TextContent]:
+		async def handle_call_tool(name: str, arguments: Dict[str, Any]) -> types.CallToolResult:
 			"""Вызвать инструмент."""
 			ctx = self.server.request_context
 			onec_client: OneCClient = ctx.lifespan_context["onec_client"]
@@ -115,13 +115,18 @@ class MCPProxy:
 				if result.isError:
 					logger.error(f"Ошибка выполнения инструмента {name}")
 				
-				return result.content
+				return result
 			except Exception as e:
-				logger.error(f"Ошибка при вызове инструмента {name}: {e}")
-				return [types.TextContent(
-					type="text",
-					text=f"Ошибка выполнения инструмента: {str(e)}"
-				)]
+				# str() у таймаутов httpx пустой — подставляем имя класса и подсказку
+				detail = str(e).strip() or "нет текста ошибки (обычно это таймаут ожидания ответа 1С)"
+				logger.error(f"Ошибка при вызове инструмента {name}: {type(e).__name__}: {detail}")
+				return types.CallToolResult(
+					isError=True,
+					content=[types.TextContent(
+						type="text",
+						text=f"Ошибка выполнения инструмента {name}: {type(e).__name__}: {detail}"
+					)]
+				)
 		
 		@self.server.list_resources()
 		async def handle_list_resources() -> List[types.Resource]:

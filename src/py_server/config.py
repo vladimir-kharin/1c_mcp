@@ -25,6 +25,7 @@ class Config(BaseSettings):
 	# Транспорт до 1С: http (HTTP-сервис), file (обмен через папку) или
 	# httppoll (обратный HTTP: агент 1С сам опрашивает листенер прокси)
 	transport: Literal["http", "file", "httppoll"] = Field(default="http", description="Транспорт до 1С: http, file или httppoll")
+	http_timeout: float = Field(default=120.0, description="Сколько (сек) ждать ответ 1С для transport=http, затем ошибка")
 	file_exchange_dir: Optional[str] = Field(default=None, description="Папка обмена для transport=file: локальный путь/UNC или ftp://user:pass@host:port/путь (внутри — подпапки in/ и out/)")
 	file_poll_interval: Optional[float] = Field(default=None, description="Как часто (сек) проверять появление ответа в out/ для transport=file; по умолчанию 0.2 для папки и 1.0 для FTP")
 	file_timeout: float = Field(default=30.0, description="Сколько (сек) ждать ответ 1С для transport=file, затем ошибка")

@@ -46,7 +46,8 @@ class HttpTransport:
     """
 
     def __init__(self, base_url: str, username: Optional[str], password: Optional[str],
-                 service_root: str = "mcp", unlock_code: Optional[str] = None):
+                 service_root: str = "mcp", unlock_code: Optional[str] = None,
+                 timeout: float = 30.0):
         """Инициализация транспорта.
 
         Args:
@@ -56,10 +57,12 @@ class HttpTransport:
             service_root: Корневой URL HTTP-сервиса (по умолчанию "mcp")
             unlock_code: Код разрешения (unlock code) для входа при блокировке
                 начала сеансов. Передаётся в каждый запрос как query-параметр uc.
+            timeout: Сколько (сек) ждать ответ 1С, затем httpx-таймаут.
         """
         self.base_url = base_url.rstrip('/')
         self.service_root = service_root.strip('/')
         self.auth = httpx.BasicAuth(username, password)
+        self.timeout = timeout
 
         # Код разрешения для обхода блокировки начала сеансов (?uc=<код>)
         self.request_params = {"uc": unlock_code} if unlock_code else None
@@ -75,7 +78,7 @@ class HttpTransport:
         """Создание нового HTTP-клиента."""
         return httpx.AsyncClient(
             auth=self.auth,
-            timeout=30.0,
+            timeout=self.timeout,
             headers={"Content-Type": "application/json"}
         )
 

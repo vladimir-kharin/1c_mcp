@@ -315,6 +315,7 @@ def create_onec_client(config: "Config", username: Optional[str], password: Opti
             password=password,
             service_root=config.onec_service_root,
             unlock_code=config.onec_unlock_code,
+            timeout=config.http_timeout,
         )
     elif transport_kind == "file":
         if not config.file_exchange_dir:

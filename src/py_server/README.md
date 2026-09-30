@@ -212,6 +212,7 @@ MCP_PUBLIC_URL=http://your-server:8000
 | Переменная | Описание | По умолчанию | Обязательная |
 |------------|----------|--------------|--------------|
 | `MCP_TRANSPORT` | Транспорт до 1С: `http`, `file` или `httppoll` | `http` | ❌ |
+| `MCP_HTTP_TIMEOUT` | Таймаут ожидания ответа 1С при `TRANSPORT=http`, сек | `120` | ❌ |
 | `MCP_FILE_EXCHANGE_DIR` | Папка обмена (подпапки `in/` и `out/`): путь или `ftp://user:pass@host/путь` | - | ✅ При `TRANSPORT=file` |
 | `MCP_FILE_POLL_INTERVAL` | Период проверки ответа, сек | `0.2` (папка) / `1` (FTP) | ❌ |
 | `MCP_FILE_TIMEOUT` | Таймаут ожидания ответа 1С, сек | `30` | ❌ |

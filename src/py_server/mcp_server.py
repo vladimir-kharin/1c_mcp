@@ -109,6 +109,15 @@ class MCPProxy:
 			onec_client: OneCClient = ctx.lifespan_context["onec_client"]
 			
 			try:
+				arguments = dict(arguments or {})
+				if name == "execute_code":
+					# Признак подтверждения ставит только прокси после диалога.
+					arguments.pop("_confirmation", None)
+					denied = await self._confirm_execute_code(ctx, arguments)
+					if denied is not None:
+						return denied
+					arguments["_confirmation"] = {"action": "accept", "confirmed": True}
+
 				logger.debug(f"Вызов инструмента: {name} с аргументами: {arguments}")
 				result = await onec_client.call_tool(name, arguments)
 				
@@ -191,6 +200,77 @@ class MCPProxy:
 					messages=[]
 				)
 	
+	async def _confirm_execute_code(
+		self,
+		ctx,
+		arguments: Dict[str, Any],
+	) -> Optional[List[types.TextContent]]:
+		"""Запросить подтверждение выполнения произвольного кода.
+
+		Диалог уходит клиенту по текущей streamable-сессии и ждёт ответ.
+		Возвращает текст отказа либо None, если пользователь подтвердил выполнение.
+
+		Args:
+			ctx: Контекст текущего MCP-запроса
+			arguments: Аргументы execute_code без служебного поля _confirmation
+
+		Returns:
+			Сообщение об отказе или None
+		"""
+		code = str(arguments.get("code") or "")
+		if not code.strip():
+			return [types.TextContent(
+				type="text",
+				text="Не указан код для выполнения (параметр code)"
+			)]
+
+		session = ctx.session
+		cap_type = getattr(types, "ElicitationCapability", None)
+		if cap_type is not None and not session.check_client_capability(
+			types.ClientCapabilities(elicitation=cap_type())
+		):
+			return [types.TextContent(
+				type="text",
+				text="Клиент MCP не поддерживает подтверждение. Выполнение кода отменено."
+			)]
+
+		schema = {
+			"type": "object",
+			"properties": {
+				"confirmed": {
+					"type": "boolean",
+					"title": "Выполнить код",
+					"description": "Разрешить выполнение этого кода в информационной базе 1С",
+					"default": False,
+				}
+			},
+			"required": ["confirmed"],
+		}
+		elicit_result = await session.elicit(
+			message=(
+				"Подтвердите выполнение произвольного кода 1С в информационной базе.\n\n"
+				+ code
+			),
+			requestedSchema=schema,
+			related_request_id=getattr(ctx, "request_id", None),
+		)
+
+		content = elicit_result.content if isinstance(getattr(elicit_result, "content", None), dict) else {}
+		confirmed = content.get("confirmed")
+		accepted = (
+			getattr(elicit_result, "action", None) == "accept"
+			and (
+				confirmed is True
+				or str(confirmed).lower() in ("true", "1", "yes", "истина")
+			)
+		)
+		if not accepted:
+			return [types.TextContent(
+				type="text",
+				text="Выполнение кода отменено пользователем"
+			)]
+		return None
+
 	def get_capabilities(self) -> Dict[str, Any]:
 		"""Получить capabilities сервера."""
 		return {

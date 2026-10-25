@@ -27,6 +27,7 @@
 			<Subsystem>mcp_КонтейнерыИнструментов</Subsystem>
 			<Subsystem>mcp_КонтейнерыРесурсов</Subsystem>
 			<Subsystem>mcp_КонтейнерыПромптов</Subsystem>
+			<Subsystem>mcp_ОбработкиСФормойНастроек</Subsystem>
 		</ChildObjects>
 	</Subsystem>
 </MetaDataObject>

@@ -51,4 +51,11 @@
 			<value>false</value>
 		</right>
 	</object>
+	<object>
+		<name>Subsystem.mcp_MCPСервер.Subsystem.mcp_ОбработкиСФормойНастроек</name>
+		<right>
+			<name>View</name>
+			<value>false</value>
+		</right>
+	</object>
 </Rights>

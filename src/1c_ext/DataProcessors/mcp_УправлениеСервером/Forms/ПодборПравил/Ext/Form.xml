@@ -1,0 +1,256 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Form xmlns="http://v8.1c.ru/8.3/xcf/logform" xmlns:app="http://v8.1c.ru/8.2/managed-application/core" xmlns:cfg="http://v8.1c.ru/8.1/data/enterprise/current-config" xmlns:dcscor="http://v8.1c.ru/8.1/data-composition-system/core" xmlns:dcssch="http://v8.1c.ru/8.1/data-composition-system/schema" xmlns:dcsset="http://v8.1c.ru/8.1/data-composition-system/settings" xmlns:ent="http://v8.1c.ru/8.1/data/enterprise" xmlns:lf="http://v8.1c.ru/8.2/managed-application/logform" xmlns:style="http://v8.1c.ru/8.1/data/ui/style" xmlns:sys="http://v8.1c.ru/8.1/data/ui/fonts/system" xmlns:v8="http://v8.1c.ru/8.1/data/core" xmlns:v8ui="http://v8.1c.ru/8.1/data/ui" xmlns:web="http://v8.1c.ru/8.1/data/ui/colors/web" xmlns:win="http://v8.1c.ru/8.1/data/ui/colors/windows" xmlns:xr="http://v8.1c.ru/8.3/xcf/readable" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.20">
+	<Title>
+		<v8:item>
+			<v8:lang>ru</v8:lang>
+			<v8:content>Подбор правил обезличивания</v8:content>
+		</v8:item>
+	</Title>
+	<AutoTitle>false</AutoTitle>
+	<AutoCommandBar name="ФормаКоманднаяПанель" id="-1">
+		<Autofill>false</Autofill>
+	</AutoCommandBar>
+	<Events>
+		<Event name="OnCreateAtServer">ПриСозданииНаСервере</Event>
+	</Events>
+	<ChildItems>
+		<CommandBar name="КоманднаяПанель" id="1">
+			<ChildItems>
+				<Button name="Выбрать" id="2">
+					<Type>CommandBarButton</Type>
+					<CommandName>Form.Command.Выбрать</CommandName>
+					<DefaultButton>true</DefaultButton>
+					<ExtendedTooltip name="ВыбратьРасширеннаяПодсказка" id="3"/>
+				</Button>
+			</ChildItems>
+		</CommandBar>
+		<InputField name="СтрокаПоиска" id="4">
+			<DataPath>СтрокаПоиска</DataPath>
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Найти</v8:content>
+				</v8:item>
+			</Title>
+			<ClearButton>true</ClearButton>
+			<InputHint>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Имя или синоним объекта или поля, например ИНН</v8:content>
+				</v8:item>
+			</InputHint>
+			<ContextMenu name="СтрокаПоискаКонтекстноеМеню" id="5"/>
+			<ExtendedTooltip name="СтрокаПоискаРасширеннаяПодсказка" id="6"/>
+			<Events>
+				<Event name="OnChange">СтрокаПоискаПриИзменении</Event>
+			</Events>
+		</InputField>
+		<Table name="Дерево" id="7">
+			<Representation>Tree</Representation>
+			<DataPath>Дерево</DataPath>
+			<RowPictureDataPath>Дерево.Картинка</RowPictureDataPath>
+			<RowFilter xsi:nil="true"/>
+			<ContextMenu name="ДеревоКонтекстноеМеню" id="8"/>
+			<AutoCommandBar name="ДеревоКоманднаяПанель" id="9">
+				<ChildItems>
+					<ButtonGroup name="ДеревоГруппаОтметки" id="50">
+						<Representation>Compact</Representation>
+						<ExtendedTooltip name="ДеревоГруппаОтметкиРасширеннаяПодсказка" id="51"/>
+						<ChildItems>
+							<Button name="ДеревоОтметитьВыделенные" id="52">
+								<Type>CommandBarButton</Type>
+								<CommandName>Form.Command.ОтметитьВыделенные</CommandName>
+								<ExtendedTooltip name="ДеревоОтметитьВыделенныеРасширеннаяПодсказка" id="53"/>
+							</Button>
+							<Button name="ДеревоСнятьОтметкуВыделенных" id="54">
+								<Type>CommandBarButton</Type>
+								<CommandName>Form.Command.СнятьОтметкуВыделенных</CommandName>
+								<ExtendedTooltip name="ДеревоСнятьОтметкуВыделенныхРасширеннаяПодсказка" id="55"/>
+							</Button>
+						</ChildItems>
+					</ButtonGroup>
+				</ChildItems>
+			</AutoCommandBar>
+			<ExtendedTooltip name="ДеревоРасширеннаяПодсказка" id="10"/>
+			<SearchStringAddition name="ДеревоСтрокаПоиска" id="11">
+				<AdditionSource>
+					<Item>Дерево</Item>
+					<Type>SearchStringRepresentation</Type>
+				</AdditionSource>
+				<ContextMenu name="ДеревоСтрокаПоискаКонтекстноеМеню" id="12"/>
+				<ExtendedTooltip name="ДеревоСтрокаПоискаРасширеннаяПодсказка" id="13"/>
+			</SearchStringAddition>
+			<ViewStatusAddition name="ДеревоСостояниеПросмотра" id="14">
+				<AdditionSource>
+					<Item>Дерево</Item>
+					<Type>ViewStatusRepresentation</Type>
+				</AdditionSource>
+				<ContextMenu name="ДеревоСостояниеПросмотраКонтекстноеМеню" id="15"/>
+				<ExtendedTooltip name="ДеревоСостояниеПросмотраРасширеннаяПодсказка" id="16"/>
+			</ViewStatusAddition>
+			<SearchControlAddition name="ДеревоУправлениеПоиском" id="17">
+				<AdditionSource>
+					<Item>Дерево</Item>
+					<Type>SearchControl</Type>
+				</AdditionSource>
+				<ContextMenu name="ДеревоУправлениеПоискомКонтекстноеМеню" id="18"/>
+				<ExtendedTooltip name="ДеревоУправлениеПоискомРасширеннаяПодсказка" id="19"/>
+			</SearchControlAddition>
+			<Events>
+				<Event name="BeforeExpand">ДеревоПередРазворачиванием</Event>
+			</Events>
+			<ChildItems>
+				<CheckBoxField name="ДеревоПометка" id="20">
+					<DataPath>Дерево.Пометка</DataPath>
+					<TitleLocation>None</TitleLocation>
+					<CheckBoxType>Auto</CheckBoxType>
+					<ContextMenu name="ДеревоПометкаКонтекстноеМеню" id="21"/>
+					<ExtendedTooltip name="ДеревоПометкаРасширеннаяПодсказка" id="22"/>
+					<Events>
+						<Event name="OnChange">ДеревоПометкаПриИзменении</Event>
+					</Events>
+				</CheckBoxField>
+				<InputField name="ДеревоПредставление" id="23">
+					<DataPath>Дерево.Представление</DataPath>
+					<Title>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Объект или поле</v8:content>
+						</v8:item>
+					</Title>
+					<ReadOnly>true</ReadOnly>
+					<ContextMenu name="ДеревоПредставлениеКонтекстноеМеню" id="24"/>
+					<ExtendedTooltip name="ДеревоПредставлениеРасширеннаяПодсказка" id="25"/>
+				</InputField>
+				<InputField name="ДеревоПолноеИмя" id="26">
+					<DataPath>Дерево.ПолноеИмя</DataPath>
+					<Title>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Правило</v8:content>
+						</v8:item>
+					</Title>
+					<ReadOnly>true</ReadOnly>
+					<ContextMenu name="ДеревоПолноеИмяКонтекстноеМеню" id="27"/>
+					<ExtendedTooltip name="ДеревоПолноеИмяРасширеннаяПодсказка" id="28"/>
+				</InputField>
+			</ChildItems>
+		</Table>
+		<LabelDecoration name="Подсказка" id="29">
+			<Title formatted="false">
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Флажок на объекте — правило на объект целиком, на поле — правило на поле. По «Выбрать» отмеченное попадает в список правил формы настроек; записываются правила кнопкой «Записать».</v8:content>
+				</v8:item>
+			</Title>
+			<ContextMenu name="ПодсказкаКонтекстноеМеню" id="30"/>
+			<ExtendedTooltip name="ПодсказкаРасширеннаяПодсказка" id="31"/>
+		</LabelDecoration>
+	</ChildItems>
+	<Attributes>
+		<Attribute name="Объект" id="32">
+			<Type>
+				<v8:Type>cfg:DataProcessorObject.mcp_УправлениеСервером</v8:Type>
+			</Type>
+			<MainAttribute>true</MainAttribute>
+		</Attribute>
+		<Attribute name="СтрокаПоиска" id="33">
+			<Type>
+				<v8:Type>xs:string</v8:Type>
+				<v8:StringQualifiers>
+					<v8:Length>100</v8:Length>
+					<v8:AllowedLength>Variable</v8:AllowedLength>
+				</v8:StringQualifiers>
+			</Type>
+		</Attribute>
+		<Attribute name="Дерево" id="34">
+			<Type>
+				<v8:Type>v8:ValueTree</v8:Type>
+			</Type>
+			<Columns>
+				<Column name="Пометка" id="35">
+					<Type>
+						<v8:Type>xs:boolean</v8:Type>
+					</Type>
+				</Column>
+				<Column name="Представление" id="36">
+					<Type>
+						<v8:Type>xs:string</v8:Type>
+						<v8:StringQualifiers>
+							<v8:Length>0</v8:Length>
+							<v8:AllowedLength>Variable</v8:AllowedLength>
+						</v8:StringQualifiers>
+					</Type>
+				</Column>
+				<Column name="ПолноеИмя" id="37">
+					<Type>
+						<v8:Type>xs:string</v8:Type>
+						<v8:StringQualifiers>
+							<v8:Length>0</v8:Length>
+							<v8:AllowedLength>Variable</v8:AllowedLength>
+						</v8:StringQualifiers>
+					</Type>
+				</Column>
+				<Column name="ПоляЗагружены" id="38">
+					<Type>
+						<v8:Type>xs:boolean</v8:Type>
+					</Type>
+				</Column>
+				<Column name="Картинка" id="39">
+					<Type>
+						<v8:Type>v8ui:Picture</v8:Type>
+					</Type>
+				</Column>
+			</Columns>
+		</Attribute>
+		<Attribute name="Отмеченные" id="40">
+			<Type>
+				<v8:Type>v8:ValueListType</v8:Type>
+			</Type>
+		</Attribute>
+	</Attributes>
+	<Parameters>
+		<Parameter name="Правила">
+			<Type/>
+		</Parameter>
+	</Parameters>
+	<Commands>
+		<Command name="Выбрать" id="41">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Выбрать</v8:content>
+				</v8:item>
+			</Title>
+			<Action>Выбрать</Action>
+		</Command>
+		<Command name="ОтметитьВыделенные" id="42">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Отметить выделенные</v8:content>
+				</v8:item>
+			</Title>
+			<Picture>
+				<xr:Ref>StdPicture.CheckAll</xr:Ref>
+				<xr:LoadTransparent>true</xr:LoadTransparent>
+			</Picture>
+			<Action>ОтметитьВыделенные</Action>
+			<Representation>Picture</Representation>
+		</Command>
+		<Command name="СнятьОтметкуВыделенных" id="43">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Снять отметку с выделенных</v8:content>
+				</v8:item>
+			</Title>
+			<Picture>
+				<xr:Ref>StdPicture.UncheckAll</xr:Ref>
+				<xr:LoadTransparent>true</xr:LoadTransparent>
+			</Picture>
+			<Action>СнятьОтметкуВыделенных</Action>
+			<Representation>Picture</Representation>
+		</Command>
+	</Commands>
+</Form>

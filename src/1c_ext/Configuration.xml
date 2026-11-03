@@ -54,7 +54,7 @@
 				<xr:Item xsi:type="xr:MDObjectRef">Role.mcp_ПолныеПрава</xr:Item>
 			</DefaultRoles>
 			<Vendor>Харин Владимир</Vendor>
-			<Version>1.9.1</Version>
+			<Version>1.10.0</Version>
 			<BriefInformation/>
 			<DetailedInformation/>
 			<Copyright/>
@@ -85,6 +85,7 @@
 			<CommonModule>mcp_Метаданные</CommonModule>
 			<CommonModule>mcp_Выполнение</CommonModule>
 			<CommonModule>mcp_Содержимое</CommonModule>
+			<CommonModule>mcp_Обезличивание</CommonModule>
 			<HTTPService>mcp_APIBackend</HTTPService>
 			<DataProcessor>mcp_УправлениеСервером</DataProcessor>
 			<DataProcessor>mcp_ИнструментДанныеОКонфигурации</DataProcessor>
